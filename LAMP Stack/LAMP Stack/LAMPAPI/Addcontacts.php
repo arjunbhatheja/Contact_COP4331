@@ -9,7 +9,7 @@
 	else
 	{
 		$stmt = $conn->prepare("INSERT into Contacts (UserId,FirstName,LastName,Phone,Email) VALUES(?,?,?,?,?)");
-		$stmt->bind_param("sssss", $inData["UserID"], $inData["FirstName"],$inData["LastName"],$inData["Phone"],$inData["Email"]);
+		$stmt->bind_param("issss", $inData["UserID"], $inData["FirstName"],$inData["LastName"],$inData["Phone"],$inData["Email"]);
 
 		$stmt->execute();
 		$stmt->close();
