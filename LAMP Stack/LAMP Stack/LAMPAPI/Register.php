@@ -12,13 +12,18 @@
 	} 
 	else
 	{
-		$smp = $conn-> prepare("Select * from Users WHERE Login = ? and Password = ?");
-		$smp->bind_param("s", $login);
+		$smp = $conn-> prepare("Select * from Users WHERE BINARY Login = ?");
+		$smp->bind_param("s", $inData["login"]);
 		$smp->execute();
 		$result = $smp->get_result();
 		$rows = mysqli_num_rows($result);
 		if ($rows == 0)
 		{
+			if((strlen(trim($inData["firstName"])) == 0)||(strlen(trim($inData["lastName"])) == 0)||(strlen(trim($inData["login"])) == 0)||(strlen(trim($inData["password"])) == 0)){
+				http_response_code(400);
+				returnWithInfo("Fill in information");
+				exit();
+			}
 			$stmt = $conn->prepare("INSERT into Users (FirstName, LastName, Login, Password) VALUES(?,?,?,?)");
 			$stmt->bind_param("ssss", $inData["firstName"], $inData["lastName"], $inData["login"], $inData["password"]);
 			$stmt->execute();
@@ -30,7 +35,7 @@
 			returnWithInfo($searchResults);
 		} else {
 			http_response_code(409);
-			returnWithError("Username taken");
+			returnWithError("Please select a unique user name");
 		}
 	}
 
