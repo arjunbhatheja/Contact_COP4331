@@ -14,7 +14,12 @@
 	}
 	else
 	{
-		$stmt = $conn->prepare("SELECT ID,firstName,lastName FROM Users WHERE Login=? AND Password =?");
+		if((strlen(trim($inData["login"])) == 0)||(strlen(trim($inData["password"])) == 0)){
+			http_response_code(400);
+			returnWithInfo("Fill in information");
+			exit();
+		}
+		$stmt = $conn->prepare("SELECT ID,FirstName,LastName FROM Users WHERE BINARY Login=? AND BINARY Password =?");
 		$stmt->bind_param("ss", $inData["login"], $inData["password"]);
 		$stmt->execute();
 		$result = $stmt->get_result();
@@ -25,6 +30,8 @@
 		}
 		else
 		{
+			http_response_code(400);
+			returnWithError("Incorrect user/password");
 			returnWithError("No Records Found");
 		}
 
