@@ -1,0 +1,125 @@
+<html>
+<head>
+    <title>CloudyCon-contact manager team 17</title>
+	<script type="text/javascript" src="js/md5.js"></script>
+	<script type="text/javascript" src="js/code.js"></script>
+    <link href="css/stylesUI.css" rel="stylesheet">	
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+	
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() 
+        {
+            readCookie();
+        }, false);
+    </script>
+
+</head>
+
+
+<div id="logo">
+    <a href="UI.html">
+        <img src="logo1.png" id="title" alt="Logo">
+    </a>
+    <a href="about.html" id="aboutLink">About Us</a>
+    <i class='bx bx-log-out' id="logoutButton" onclick="doLogout();"></i>
+</div>
+
+
+<div id="container">
+    <div id="interface">
+        <input type="text" id="searchContact" placeholder="Search" onkeyup="searchContacts()">
+        <i class='bx bxs-book-add' id="addContactButton"></i>
+        <i class='bx bx-refresh' id="refreshButton" ></i>
+    </div>
+
+
+
+    <div id="resultWindow"></div>
+    <p id="lazyLoad" onclick="lazyLoading()">Load more</p>
+
+
+
+    <div class="popAddDiv">
+        
+        <div class="popUp">
+            <input required type="text" id="firstName" placeholder="First Name" onclick="resetNoti()">
+            <input required type="text" id="lastName" placeholder="Last Name" onclick="resetNoti()">
+            <input type="email" id="email" placeholder="Email"onclick="resetNoti()">
+            <input type="tel" id="phone" onkeydown="phoneFormatter();" placeholder="Phone" maxlength="14" onclick="resetNoti()">
+            <br />
+            <button id="addContact" onclick="addContacts();">add</button>
+            <br />
+            <button id="close">X</button>
+        </div>
+        <div id="addNoti">
+            <p id="contactAddResult"></p>
+        </div>
+    </div>
+
+    <div class="popEditDiv">
+        <div class="EditpopUp">
+            <input type="text" id="efirstName" placeholder="First Name" onclick="resetEditNoti()">
+            <input type="text" id="elastName" placeholder="Last Name" onclick="resetEditNoti()">
+            <input type="email" id="eemail" placeholder="Email" onclick="resetEditNoti()">
+            <input type="tel" id="ephone" maxlength="14" placeholder="Phone" onkeydown="phoneFormatter2();" onclick="resetEditNoti()">
+            <br />
+            <button id="EditContact">Save</button>
+            <br />
+            <button id="eclose">X</button>
+        </div>
+        <div id="updateNoti">
+            <p id="contactEditResult"></p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    document.getElementById("addContactButton").addEventListener("click", function(){
+        document.querySelector(".popAddDiv").style.display = "flex";
+    })
+</script>
+<script>
+    document.getElementById("close").addEventListener("click", function(){
+        resetNoti();
+        document.querySelector(".popAddDiv").style.display = "none";
+        const inputs =  document.querySelectorAll(".popUp input");
+        inputs.forEach(input => {
+        input.value = '';
+        });
+
+    })
+</script>
+<script>
+    document.getElementById("eclose").addEventListener("click", function(){
+        resetEditNoti();
+        document.querySelector(".popEditDiv").style.display = "none";
+    })
+</script>
+<script>
+    document.getElementById("refreshButton").addEventListener("click", function(){
+        window.location.href = "UI.html";
+    })
+</script>
+<script>
+    document.getElementById('searchContact').addEventListener("load", function(){
+        searchContacts();
+    });
+    /*document.addEventListener('DOMContentLoaded', function() {
+    searchContacts()
+});*/
+    /*document.addEventListener("DOMContentLoaded", function() {
+        let elements =  document.querySelectorAll(".searchResults");
+        elements.forEach(element => {
+            console.log('get here');
+            element.style.animation = 'loadIn 300ms ease forwards';
+        });
+    });*/
+</script>
+
+
+
+</body>
+</html>

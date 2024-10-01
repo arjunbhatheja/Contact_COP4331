@@ -1,0 +1,52 @@
+<html>
+<head>
+	<title>CloudyCon-register team 17</title>
+	<script type="text/javascript" src="js/md5.js"></script>
+	<script type="text/javascript" src="js/code.js" defer></script>
+    <link href="css/styles.css" rel="stylesheet">	
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+</head>
+<body>
+
+<div id="SignupDiv">
+	<span id="inner-title">PLEASE FILL IN INFORMATION</span>
+    <p  id="script">Enter first name*</p>
+    <input type="text" id="firstName" placeholder="First name" onclick="resetSNoti()"/><br />
+    <p id="script">Enter last name*</p>
+	<input type="text" id="lastName" placeholder="Last name" onclick="resetSNoti()"/><br />
+    <p id="script">Create Username*</p>
+	<input type="text" id="login" placeholder="Username" onclick="resetSNoti()"/><br />
+    <p id="script">Create Password*</p>
+	<input type="password" id="password" placeholder="Password" onclick="resetSNoti()"/><br />
+	<i class="far fa-eye-slash" onclick="passSi()" id="togglePassword"></i>
+	<div class="instructionDiv">
+		<div class="instr">
+			<p>*Contains at least eight characters</p>
+			<p>*Contains at least one symbol</p>
+			<p>*Contains at least one number</p>
+			<p>*Contains at least one uppercase character</p>
+			<p>*Contains at least one lowercase character</p>
+		</div>
+	</div>
+	<button type="button" id="loginButton" class="buttons" onclick="doSignup();"> Sign up </button>
+	<a id="backToLog" href = "index.html">Back to Login</a>
+</div>
+<div id= 'reNoti'>
+	<p id="registerResult">
+	</p>
+</div>
+
+<script>
+	document.getElementById('password').addEventListener('click', function() {
+		document.querySelector('.instructionDiv').style.gridTemplateRows = '1fr';
+	});
+
+	function resetSNoti(){
+		document.getElementById('reNoti').style.display = 'none';
+	}
+</script>
+
+</body>
+</html>

@@ -1,22 +1,90 @@
 <html>
 <head>
-	<title>COP 4331 LAMP Stack Demo</title>
+	<title>CloudyCon-login team 17</title>
 	<script type="text/javascript" src="js/md5.js"></script>
 	<script type="text/javascript" src="js/code.js"></script>
     <link href="css/styles.css" rel="stylesheet">	
     <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
 </head>
 <body>
 
-<h1 id="title">COP 4331 LAMP Stack Demo</h1>
-
+<div id="logo" onclick="logo_animation();">
+	<img src="logo1.png" id="title"onclick="logo_animation();" ></img>
+</div>
 <div id="loginDiv">
 	<span id="inner-title">PLEASE LOG IN</span>
 	<input type="text" id="loginName" placeholder="Username" /><br />
+	<i class='bx bxs-user-circle'></i>
 	<input type="password" id="loginPassword" placeholder="Password"/><br />
-	<button type="button" id="loginButton" class="buttons" onclick="doLogin();"> Do It </button>
-	<span id="loginResult"></span>
+	<i class='bx bxs-lock-alt' ></i> <i class="far fa-eye-slash" onclick="pass();" id="togglePassword"></i>
+	<p id="ques">don't have an account?</p><a id="linktext" href="signin.html">register</a>
+	<button type="button" id="loginButton" class="buttons" onclick="doLogin();"> Login </button>
 </div>
+<div id="notification">
+	<p id="loginResult"></p>
+</div>
+
+<p id="welcomeContainer">
+
+	<img id="cloud" src="images/cloud.png" alt="cloud" onclick="fadeCloud()">
+
+	<a href="https://github.com/arjunbhatheja/Contact_COP4331" target="_blank"
+		id="welcomeMessage">
+		Ready to Connect?
+	</a>
+</p>
+
+<script>
+
+	function fadeCloud() {
+		const cloud = document.getElementById('cloud');
+		const message = document.getElementById('welcomeMessage');
+
+		
+		cloud.style.opacity = '0';
+
+		
+		setTimeout(() => {
+			cloud.style.display = 'none';  
+			message.style.opacity = '1';
+		}, 1000);  
+	}
+
+</script>
+
+<script>
+	document.getElementById("loginName").addEventListener("click",function(){
+		var element= document.getElementById("notification");
+		var mess = document.getElementById("loginResult");
+		mess.innerHTML="";
+		element.style.display="none";
+	})
+</script>
+<script>
+	document.getElementById("loginPassword").addEventListener("click",function(){
+		var element= document.getElementById("notification");
+		var mess = document.getElementById("loginResult");
+		mess.innerHTML="";
+		element.style.display="none";
+	})
+</script>
+<script>
+
+	document.getElementById('loginName').addEventListener('keyup', function (event) {
+		if (event.key === 'Enter') {
+			document.getElementById('loginButton').click();
+		}
+	});
+
+	document.getElementById('loginPassword').addEventListener('keyup', function (event) {
+		if (event.key === 'Enter') {
+			document.getElementById('loginButton').click();
+		}
+	});
+	
+</script>
 
 </body>
 </html>
