@@ -1,3 +1,4 @@
+
 const urlBase = 'http://cop433117.xyz/LAMPAPI';
 const extension = 'php';
 
@@ -5,7 +6,8 @@ let userID = 0;
 let firstName = "";
 let lastName = "";
 
-function doLogin() {
+function doLogin() 
+{
 	userID = 0;
 	firstName = "";
 	lastName = "";
@@ -15,6 +17,7 @@ function doLogin() {
 	//	var hash = md5( password );
 
 	document.getElementById("loginResult").innerHTML = "";
+
 	let tmp = { login: login, password: password };
 	//	var tmp = {login:login,password:hash};
 	let jsonPayload = JSON.stringify(tmp);
@@ -42,15 +45,16 @@ function doLogin() {
 				saveCookie();
 
 				window.location.href = "UI.html";
-				searchContacts();
+				
 			}
-			else if(this.readyState==4&& this.status==400){
+			else if(this.readyState==4 && this.status==400){
 				var element= document.getElementById("notification");
 				var mess = document.getElementById("loginResult");
 				element.style.display="flex";
 				element.style.animation = 'slideDown 400ms ease forwards'; // Apply the animation
     			mess.innerHTML = "User/Password combination incorrect!!!";
 			}
+			
 		};
 		xhr.send(jsonPayload);
 
@@ -65,6 +69,11 @@ function doSignup() {
 	let password = document.getElementById("password").value;
 	let firstName = document.getElementById("firstName").value;
 	let lastName = document.getElementById("lastName").value;
+	let isValid;
+
+	isValid = requirements.map(req => req.regex.test(password));
+	console.log(isValid);
+		
 
 	let tmp = { login: login, password: password, firstName: firstName, lastName: lastName };
 
@@ -76,22 +85,50 @@ function doSignup() {
 	xhr.open("POST", url, true);
 	xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
-	try {
-		xhr.onreadystatechange = function () {
-			if (xhr.readyState == 4 && this.status == 409) {
-				document.getElementById("registerResult").innerHTML = "Invalid username!!!";
-			}
-			else if (xhr.readyState == 4 && this.status == 200) {
-				document.getElementById("registerResult").innerHTML = "Successful!!!";
-			}
-		};
-		xhr.send(jsonPayload);
+	document.getElementById("registerResult").innerHTML = "";
+	if(isValid.reduce((acc, curr) => acc && curr, true) && password!=="")
+	{
+		try {
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState == 4 && this.status == 409) {
+					var element=document.getElementById("reNoti");
+					var mess =  document.getElementById("registerResult")
+					element.style.display="flex";
+					mess.style.backgroundColor="rgba(255,0, 0, 0.6)";
+					mess.innerHTML = "Username already exist!!!";
+					mess.style.animation='reNotiSlide 400ms ease forwards';
+				}
+				else if (xhr.readyState == 4 && this.status == 200) {
+					var element=document.getElementById("reNoti");
+					var mess =  document.getElementById("registerResult")
+					element.style.display="flex";
+					mess.style.backgroundColor="rgba(0,255, 30, 0.6)";
+					mess.innerHTML = "Successful";
+					mess.style.animation='reNotiSlide 400ms ease forwards';
+				}
+				else if(this.readyState==4&& this.status==400){
+					var element=document.getElementById("reNoti");
+					var mess =  document.getElementById("registerResult")
+					element.style.display="flex";
+					mess.style.backgroundColor="rgba(255,0, 0, 0.6)";
+					mess.innerHTML = "Fill in information!!!";
+					mess.style.animation='reNotiSlide 400ms ease forwards';
+				}
+			};
+			xhr.send(jsonPayload);
+		}
+		catch (err) {
+			document.getElementById("registerResult").innerHTML = err.message;
+		}
 	}
-	catch (err) {
-		document.getElementById("registerResult").innerHTML = err.message;
+	else if(!isValid.reduce((acc, curr) => acc && curr, true)){
+		var element=document.getElementById("reNoti");
+		var mess =  document.getElementById("registerResult")
+		element.style.display="flex";
+		mess.style.backgroundColor="rgba(255,0, 0, 0.6)";
+		mess.innerHTML = "Password doesn't meet requirements!!!";
+		mess.style.animation='reNotiSlide 400ms ease forwards';
 	}
-
-
 }
 function back() {
 	window.location.href = "http://cop433117.xyz";
@@ -128,6 +165,7 @@ function readCookie() {
 	else {
 		//		document.getElementById("userName").innerHTML = "Logged in as " + firstName + " " + lastName;
 	}
+	searchContacts();
 }
 
 function doLogout() {
@@ -147,6 +185,32 @@ function addContacts() {
 	let userId = userID;
 	
 	document.getElementById("contactAddResult").innerHTML = "";
+    	let emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    
+    // Regular expression for phone validation (10 digits, allowing optional separators)
+    	let phonePattern = /^\(\d{3}\) \d{3}-\d{4}$/;
+
+    // Validate email
+	if (!emailPattern.test(newEmail) && newEmail!=="") {
+		var element=document.getElementById("addNoti");
+		element.style.display="flex";
+		element.style.backgroundColor="rgba(255,0, 0, 0.6)";
+		element.style.animation='slideUp 400ms ease forwards';
+		document.getElementById("contactAddResult").innerHTML = "Invalid email format";
+		return;
+	}
+    	
+
+    // Validate phone number
+	if (!phonePattern.test(newPhone) && newPhone!=="") {
+		var element=document.getElementById("addNoti");
+		element.style.display="flex";
+		element.style.backgroundColor="rgba(255,0, 0, 0.6)";
+		element.style.animation='slideUp 400ms ease forwards';
+		document.getElementById("contactAddResult").innerHTML = "Invalid phone format";
+		return;
+	}
+    	
 
 	let tmp = { firstName: newFirst, lastName: newLast, phone: newPhone, email: newEmail, userId: userId };
 	let jsonPayload = JSON.stringify(tmp);
@@ -173,6 +237,16 @@ function addContacts() {
 				element.style.animation='slideUp 400ms ease forwards';
 				document.getElementById("contactAddResult").innerHTML = "Contact already exist";
 			}
+			else if (this.readyState ==4 && this.status == 400) {
+				var element=document.getElementById("addNoti");
+				element.style.display="flex";
+				element.style.backgroundColor="rgba(255,0, 0, 0.6)";
+				element.style.animation='slideUp 400ms ease forwards';
+				document.getElementById("contactAddResult").innerHTML = "Enter information";
+			}
+			
+			
+
 		};
 		xhr.send(jsonPayload);
 	}
@@ -181,7 +255,7 @@ function addContacts() {
 	}
 
 }
-
+var blockID=0;
 function searchContacts() {
 	let srch = document.getElementById("searchContact").value;
 	document.getElementById("resultWindow").innerHTML="";
@@ -202,54 +276,79 @@ function searchContacts() {
 
 				let jsonObject = JSON.parse(xhr.responseText);
 				let container = document.getElementById("resultWindow");
-				for (let i = 0; i < jsonObject.results.length; i++) {
+				container.style.overflowY='hidden';
+				if(jsonObject.id != 0){
+					blockID = jsonObject.results.length;
+					for (let i = 0; i < jsonObject.results.length; i++) {
 
-					let newDiv = document.createElement('div');
-					newDiv.className = "searchResults";
-					newDiv.id=i;
+						let newDiv = document.createElement('div');
+						newDiv.className = "searchResults";
+						newDiv.id=i;
 
-					let name = document.createElement('p');
-					name.textContent = "Name: " + jsonObject.results[i].FirstName + " " + jsonObject.results[i].LastName;
+						let name = document.createElement('p');
+						let nIcon = document.createElement('i');
+						nIcon.classList.add('bx', 'bxs-user-circle');
+						name.appendChild(nIcon);
+						let nText = document.createTextNode(" : " + jsonObject.results[i].FirstName + " " + jsonObject.results[i].LastName);
+						name.appendChild(nText);
 
-					let phone = document.createElement('p');
-					phone.textContent = "Phone: " + jsonObject.results[i].Phone;
+						let phone = document.createElement('p');
+						let pIcon = document.createElement('i');
+						pIcon.classList.add('bx', 'bxs-phone');
+						phone.appendChild(pIcon);
+						let pText = document.createTextNode(" : " + jsonObject.results[i].Phone);
+						phone.appendChild(pText);
 
-					let email = document.createElement('p');
-					email.textContent = "Email: " + jsonObject.results[i].Email;
+						let email = document.createElement('p');
+						let eIcon = document.createElement('i');
+						eIcon.classList.add('bx', 'bxs-envelope');
+						email.appendChild(eIcon);
+						let eText = document.createTextNode(" : " + jsonObject.results[i].Email);
+						email.appendChild(eText);
 
-					let del = document.createElement('i');
-					//del.innerHTML = "&#128465;";
-					del.classList.add("bx", "bxs-trash");
+						let del = document.createElement('i');
+						//del.innerHTML = "&#128465;";
+						del.classList.add("bx", "bxs-trash");
 
-					let contactId = jsonObject.results[i].ID;
+						let contactId = jsonObject.results[i].ID;
 
-					del.addEventListener('click', function () {
-						deleteContacts(contactId,i);
+						del.addEventListener('click', function () {
+							deleteContacts(contactId,i);
 
-					});
+						});
 
-					let ed = document.createElement('i');
-					//ed.innerHTML = "&#9998;";
-					ed.classList.add("bx", "bxs-edit");
+						let ed = document.createElement('i');
+						//ed.innerHTML = "&#9998;";
+						ed.classList.add("bx", "bxs-edit");
 
-					ed.addEventListener('click', function () {
+						ed.addEventListener('click', function () {
 
-						document.querySelector('.popEditDiv').style.display = 'flex';
+							document.querySelector('.popEditDiv').style.display = 'flex';
+							document.getElementById('efirstName').value=jsonObject.results[i].FirstName;
+							document.getElementById('elastName').value=jsonObject.results[i].LastName;
+							document.getElementById('eemail').value=jsonObject.results[i].Email;
+							document.getElementById('ephone').value=jsonObject.results[i].Phone;
 
-						document.getElementById("EditContact").onclick = function () {
-							updateContacts(contactId);
-						};
+							document.getElementById("EditContact").onclick = function () {
+								updateContacts(contactId);
+							};
 
-					});
+						});
 
-					newDiv.appendChild(name);
-					newDiv.appendChild(phone);
-					newDiv.appendChild(email);
-					newDiv.appendChild(ed);
-					newDiv.appendChild(del);
+						let actionDiv = document.createElement('p');
+						actionDiv.appendChild(ed);
+						actionDiv.appendChild(del);
 
-					container.appendChild(newDiv);
+						newDiv.appendChild(name);
+						newDiv.appendChild(phone);
+						newDiv.appendChild(email);
+						newDiv.appendChild(actionDiv);
+						newDiv.style.animation = 'loadIn 400ms ease-in-out forwards';
+						container.appendChild(newDiv);
+						
+					}
 				}
+				loadDisplay();
 			}
 		};
 		xhr.send(jsonPayload);
@@ -261,12 +360,38 @@ function searchContacts() {
 }
 
 
-function updateContacts(contactId) {
+function updateContacts(contactId,divID) {
 
 	let efirstName = document.getElementById("efirstName").value;
 	let elastName = document.getElementById("elastName").value;
 	let ephone = document.getElementById("ephone").value;
 	let eemail = document.getElementById("eemail").value;
+
+	let div = document.getElementById("divID");
+    	let emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    
+    // Regular expression for phone validation (10 digits, allowing optional separators)
+    	let phonePattern = /^\(\d{3}\) \d{3}-\d{4}$/;
+
+    // Validate email
+    	if (!emailPattern.test(eemail)) {
+			var element=document.getElementById("updateNoti");
+			element.style.display="flex";
+			element.style.backgroundColor="rgba(255,0, 0, 0.6)";
+			element.style.animation='slideUp 400ms ease forwards';
+			document.getElementById("contactEditResult").innerHTML = "Invalid email";
+        	return;
+    	}
+
+    // Validate phone number
+    	if (!phonePattern.test(ephone)) {
+        	var element=document.getElementById("updateNoti");
+			element.style.display="flex";
+			element.style.backgroundColor="rgba(255,0, 0, 0.6)";
+			element.style.animation='slideUp 400ms ease forwards';
+			document.getElementById("contactEditResult").innerHTML = "Invalid phone number";
+        	return;
+    	}
 
 	let tmp = { id: contactId, userId: userID, firstName: efirstName, lastName: elastName, phone: ephone, email: eemail };
 
@@ -280,26 +405,50 @@ function updateContacts(contactId) {
 	xhr.open("POST", url, true);
 	xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
 
+	document.getElementById("contactEditResult").innerHTML = "";
+
 	try {
 		xhr.onreadystatechange = function () {
 			if (this.readyState == 4 && this.status == 200) {
-				document.getElementById("contactEditResult").innerHTML = "Updated!";
+				var element=document.getElementById("updateNoti");
+				element.style.display="flex";
+				element.style.backgroundColor="rgba(0,255, 30, 0.6)";
+				element.style.animation='slideUp 400ms ease forwards';
+				document.getElementById("contactEditResult").innerHTML = "Updated";
+				document.querySelector('.popEditDiv').style.display = 'none';
 				searchContacts();
 
-			} else {
-				document.getElementById("contactEditResult").innerHTML = "Failed to Update";
+			} 
+			else if(this.readyState == 4 && this.status == 400){
+				var element=document.getElementById("updateNoti");
+				element.style.display="flex";
+				element.style.backgroundColor="rgba(255,0, 0, 0.6)";
+				element.style.animation='slideUp 400ms ease forwards';
+				document.getElementById("contactEditResult").innerHTML = "Nothing updated";
+			}
+			
+			else {
+				var element=document.getElementById("updateNoti");
+				element.style.display="flex";
+				element.style.backgroundColor="rgba(255,0, 0, 0.6)";
+				element.style.animation='slideUp 400ms ease forwards';
+				document.getElementById("contactEditResult").innerHTML = "Fail";
 			}
 		};
 		xhr.send(jsonPayload);
 	}
 	catch (err) {
-		document.getElementById("contactEditResult").innerHTML = "Failed to Update";
+		var element=document.getElementById("updateNoti");
+				element.style.display="flex";
+				element.style.backgroundColor="rgba(255,0, 0, 0.6)";
+				element.style.animation='slideUp 400ms ease forwards';
+				document.getElementById("contactEditResult").innerHTML = "Enter update";
 	}
 }
 
 
 
-function deleteContacts(contactId,divID) {
+function deleteContacts(contactId, divID) {
 	let confirmDeletion = confirm("Are you sure you want to delete this contact?");
 	if (confirmDeletion) {
 
@@ -307,6 +456,7 @@ function deleteContacts(contactId,divID) {
 			id: contactId,
 			userId: userID
 		};
+		
 
 		let jsonPayload = JSON.stringify(tmp);
 
@@ -371,7 +521,12 @@ function formatPhone(value){
 }
 
 function phoneFormatter(){
-	const input = document.querySelector(".phoneNume");
+	const input = document.getElementById("phone");
+	const formatted=formatPhone(input.value);
+	input.value = formatted;
+}
+function phoneFormatter2(){
+	const input = document.getElementById("ephone");
 	const formatted=formatPhone(input.value);
 	input.value = formatted;
 }
@@ -381,4 +536,65 @@ function resetNoti(){
 	var mess = document.getElementById("contactAddResult");
 	mess.innerHTML="";
 	element.style.display="none";
+}
+
+function resetEditNoti(){
+	var element= document.getElementById("updateNoti");
+	var mess = document.getElementById("contactEditResult");
+	mess.innerHTML="";
+	element.style.display="none";
+}
+
+function logo_animation(){
+	document.getElementById("logo").style.animation='logoSlide 800ms ease forwards';
+	/*console.log("does not slide");*/
+	document.getElementById("loginDiv").style.display="block";
+	document.getElementById("loginDiv").style.animation="loginSlide 800ms ease forwards";
+	document.getElementById("welcomeContainer").style.display = "block";
+    document.getElementById("welcomeContainer").style.animation = "fadeIn 800ms ease forwards";
+	
+}
+
+const passInput = document.getElementById('password');
+const requirementsList = document.querySelectorAll(".instr p");
+const requirements = [
+	{regex: /.{8,}/, index: 0},
+	{regex: /[^A-Za-z0-9]/, index: 1},
+	{regex: /[0-9]/, index: 2},
+	{regex: /[A-Z]/, index: 3},
+	{regex: /[a-z]/, index: 4},
+]
+
+
+
+passInput.addEventListener("keyup", (e)=>{
+	requirements.forEach(item =>{
+	const isValid = item.regex.test(e.target.value);
+	const requirementItem = requirementsList[item.index];
+
+	if(isValid){
+		requirementItem.classList.add("valid");
+	}
+	else{
+		requirementItem.classList.remove("valid");
+	}
+	});
+});
+
+/*Lazy loading*/
+
+
+function loadDisplay(){
+
+	
+	let full=(blockID)*140;
+	if(full>900) document.getElementById('lazyLoad').style.display = 'flex';
+	else document.getElementById('lazyLoad').style.display = 'none';
+}
+
+
+function lazyLoading(){
+	const container = document.getElementById('resultWindow');
+	container.style.overflowY = 'auto';
+	document.getElementById('lazyLoad').style.display = 'none';
 }
